@@ -144,24 +144,6 @@ void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
     UI::End();
 }
 
-[Setting category="General" name="Starting X position" min=-1.0f max=1.0f]
-float S_X_Offset = 0.15f;
-
-[Setting category="General" name="Starting Y position" min=0.0f max=3.0f]
-float S_Y_Offset = 0.865f;
-
-[Setting category="General" name="Radius" min=0.0f max=0.5f]
-float S_Radius = 0.15f;
-
-[Setting category="General" name="Number of steps" min=3 max=15]
-int S_Steps = 12;
-
-[Setting category="General" name="stroke width" min=1.0 max=15.0]
-float S_Stroke = 4;
-
-[Setting category="General" name="Color" color]
-vec4 S_Color(1.0f, 1.0f, 1.0f, 0.3f);
-
 void RenderNvg(CSceneVehicleVisState@ State) {
     if (Camera::IsBehind(State.Position))
         return;
@@ -185,11 +167,11 @@ void RenderNvg(CSceneVehicleVisState@ State) {
 
     for (uint i = 1; i < points.Length; i++) {
         const vec2 point = Camera::ToScreenSpace(points[i]);
-        if (point.x > 0.0f && int(Math::Abs(point.x)) < screenWidth && point.y > 0.0f && int(Math::Abs(point.y)) < screenHeight)
+        if (InScreenBounds(point))
             nvg::LineTo(point);
     }
 
-    if (initPoint.x > 0.0f && int(Math::Abs(initPoint.x)) < screenWidth && initPoint.y > 0.0f && int(Math::Abs(initPoint.y)) < screenHeight)
+    if (InScreenBounds(initPoint))
         nvg::LineTo(initPoint);
 
     nvg::StrokeColor(S_Color);
