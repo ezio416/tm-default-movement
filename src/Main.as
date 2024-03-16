@@ -153,7 +153,7 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     for (float theta = 0.0f; theta < 4.0f * halfPi; theta += halfPi / S_Steps) {
         points.InsertLast(
             State.Position
-                + (State.Dir * Math::Sin(theta) * S_Radius)
+                + (vec3(State.Dir.x, 0.0f, State.Dir.z) * Math::Sin(theta) * S_Radius)
                 + (State.Left * Math::Cos(theta) * S_Radius)
                 + (State.Dir * -S_X_Offset)
                 + (State.Up * S_Y_Offset)
@@ -175,6 +175,6 @@ void RenderNvg(CSceneVehicleVisState@ State) {
         nvg::LineTo(initPoint);
 
     nvg::StrokeColor(S_Color);
-    nvg::StrokeWidth(S_Stroke);
+    nvg::StrokeWidth(S_Stroke / (Camera::GetCurrentPosition() - State.Position).Length());
     nvg::Stroke();
 }
