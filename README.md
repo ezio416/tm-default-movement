@@ -1,8 +1,9 @@
 ![Signed](https://img.shields.io/badge/Signed-No-FF3333)
 ![Game Trackmania](https://img.shields.io/badge/Game-Trackmania-blue)
-# PluginTemplate
 
-A template for writing plugins more easily.
+# Default Movement
+
+When dead-turtled (upside-down with no wheel contact), this shows your "default movement" speed, direction, and how far you will go in a certain amount of time.
 
 <!-- ![Signed](https://img.shields.io/badge/Signed-Yes-00AA00) -->
 <!-- ![Signed](https://img.shields.io/badge/Signed-School_Mode-CC1199) -->
