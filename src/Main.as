@@ -110,7 +110,8 @@ void Render() {
     if (S_Window)
         RenderUI(State, raceTime);
 
-    RenderNvg(State);
+    if (!Network.PlaygroundClientScriptAPI.IsInGameMenuDisplayed)
+        RenderNvg(State);
 }
 
 void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
@@ -162,10 +163,7 @@ float S_Stroke = 4;
 vec4 S_Color(1.0f, 1.0f, 1.0f, 0.3f);
 
 void RenderNvg(CSceneVehicleVisState@ State) {
-    if (
-        Camera::IsBehind(State.Position)
-        || (Camera::GetCurrentPosition() - State.Position).LengthSquared() < 1.0f
-    )
+    if (Camera::IsBehind(State.Position))
         return;
 
     vec3[] points;
