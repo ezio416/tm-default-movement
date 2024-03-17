@@ -201,37 +201,6 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     const vec3 startPoint = State.Position + (State.Dir * -S_X_Offset) + (State.Up * S_Y_Offset);
     const vec2 startPointScreen = Camera::ToScreenSpace(startPoint);
 
-    // base circle
-    //#########################################################################
-
-    // vec3[] points;
-
-    // for (float theta = 0.0f; theta < 4.0f * halfPi; theta += halfPi / S_Steps) {
-    //     points.InsertLast(
-    //         start
-    //         + (vec3(State.Dir.x, 0.0f, State.Dir.z) * Math::Sin(theta) * S_Radius)
-    //         + (State.Left * Math::Cos(theta) * S_Radius)
-    //     );
-    // }
-
-    // nvg::BeginPath();
-    // nvg::StrokeColor(S_Color);
-    // nvg::StrokeWidth(S_Stroke / camDist);
-
-    // const vec2 baseCircleInitPoint = Camera::ToScreenSpace(points[0]);
-    // nvg::MoveTo(baseCircleInitPoint);
-
-    // for (uint i = 1; i < points.Length; i++) {
-    //     const vec2 point = Camera::ToScreenSpace(points[i]);
-    //     if (InScreenBounds(point))
-    //         nvg::LineTo(point);
-    // }
-
-    // if (InScreenBounds(baseCircleInitPoint))
-    //     nvg::LineTo(baseCircleInitPoint);
-
-    // nvg::Stroke();
-
     // line
     //#########################################################################
 
@@ -245,9 +214,11 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     while (planarVelocityRollingValues.Length > S_RollingMax)
         planarVelocityRollingValues.RemoveAt(0);
 
-    const vec3 planarVelocityRollingAverage = AverageVec3(planarVelocityRollingValues);
+    const vec3 planarVelocityAverage = AverageVec3(planarVelocityRollingValues);
+    const vec3 planarVelocityNormal = planarVelocityAverage.Normalized();
+    const float planarVelocityLength = planarVelocityAverage.Length();
 
-    const vec3 endPoint = startPoint + (planarVelocityRollingAverage.Length() > 0.0f ? planarVelocityRollingAverage.Normalized() * planarVelocityRollingAverage.Length() * 720.0f : vec3());
+    const vec3 endPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 720.0f : vec3());
     const vec2 endPointScreen = Camera::ToScreenSpace(endPoint);
 
     if (InScreenBounds(startPointScreen))
@@ -274,7 +245,7 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     nvg::FillColor(S_10mColor);
     nvg::BeginPath();
 
-    const vec3 midPoint = startPoint + (planarVelocityRollingAverage.Length() > 0.0f ? planarVelocityRollingAverage.Normalized() * planarVelocityRollingAverage.Length() * 360.0f : vec3());
+    const vec3 midPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 360.0f : vec3());
     nvg::Circle(Camera::ToScreenSpace(midPoint), S_BallRadius / (Camera::GetCurrentPosition() - midPoint).Length());
 
     nvg::Fill();
