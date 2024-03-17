@@ -106,12 +106,6 @@ void Render() {
         planarVelocityRollingValues.RemoveRange(0, planarVelocityRollingValues.Length);
     }
 
-    if (
-        (S_HideWithGame && !UI::IsGameUIVisible())
-        || (S_HideWithOP && !UI::IsOverlayShown())
-    )
-        return;
-
     if (S_Debug)
         RenderUI(State, raceTime);
 
