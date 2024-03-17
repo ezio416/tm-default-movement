@@ -204,8 +204,8 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     // line
     //#########################################################################
 
-    nvg::StrokeColor(S_Color);
-    nvg::StrokeWidth(S_Stroke / (Camera::GetCurrentPosition() - State.Position).Length());
+    nvg::StrokeColor(S_LineColor);
+    nvg::StrokeWidth(S_LineStroke / (Camera::GetCurrentPosition() - State.Position).Length());
     nvg::BeginPath();
 
     const vec3 planerVelocity = vec3(State.WorldVel.x, 0.0f, State.WorldVel.z);

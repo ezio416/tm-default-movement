@@ -23,6 +23,12 @@ float S_X_Offset = 0.0f;
 [Setting category="Position/Style" name="Y offset" min=0.0f max=3.0f]
 float S_Y_Offset = 1.014f;
 
+[Setting category="Position/Style" name="Line stroke width" min=0.0f max=50.0f]
+float S_LineStroke = 20.0f;
+
+[Setting category="Position/Style" name="Line color" color]
+vec4 S_LineColor = vec4(1.0f, 1.0f, 1.0f, 0.5f);
+
 [Setting category="Position/Style" name="Ball radius" min=0.0f max=300.0f]
 float S_BallRadius = 100.0f;
 
@@ -34,12 +40,6 @@ vec4 S_10mColor = vec4(0.0f, 0.0f, 1.0f, 0.5f);
 
 [Setting category="Position/Style" name="20-minute ball color" color]
 vec4 S_20mColor = vec4(1.0f, 0.0f, 0.0f, 0.5f);
-
-[Setting category="Position/Style" name="Line stroke width" min=0.0f max=50.0f]
-float S_Stroke = 20.0f;
-
-[Setting category="Position/Style" name="Line color" color]
-vec4 S_Color = vec4(1.0f, 1.0f, 1.0f, 0.5f);
 
 [Setting category="Position/Style" name="Smoothing" description="How large to keep the rolling average. Direct impact on framerate." min=1 max=2000]
 uint S_RollingMax = 1000;
