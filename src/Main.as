@@ -218,7 +218,7 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     const vec3 planarVelocityNormal = planarVelocityAverage.Normalized();
     const float planarVelocityLength = planarVelocityAverage.Length();
 
-    const vec3 endPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 720.0f : vec3());
+    const vec3 endPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 600.0f : vec3());
     const vec2 endPointScreen = Camera::ToScreenSpace(endPoint);
 
     if (InScreenBounds(startPointScreen))
@@ -245,7 +245,7 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     nvg::FillColor(S_10mColor);
     nvg::BeginPath();
 
-    const vec3 midPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 360.0f : vec3());
+    const vec3 midPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * 300.0f : vec3());
     nvg::Circle(Camera::ToScreenSpace(midPoint), S_BallRadius / (Camera::GetCurrentPosition() - midPoint).Length());
 
     nvg::Fill();
