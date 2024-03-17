@@ -1,5 +1,5 @@
 // c 2024-03-15
-// m 2024-03-16
+// m 2024-03-17
 
 bool         deadTurtle      = false;
 int          deadTurtleStart = 0;
@@ -76,6 +76,9 @@ void Render() {
 
     CSmPlayer@ ViewingPlayer = VehicleState::GetViewingPlayer();
     spectating = ((ViewingPlayer is null ? "" : ViewingPlayer.ScriptAPI.Login) != loginLocal) && !replay;
+
+    if (replay)
+        return;
 
     CSceneVehicleVisState@ State = Vis.AsyncState;
     if (State is null)
