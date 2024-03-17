@@ -6,6 +6,7 @@ int          deadTurtleStart = 0;
 const float  halfPi          = Math::PI * 0.5f;
 string       loginLocal;
 const string title           = "\\$0FB" + Icons::ArrowRight + "\\$G Default Movement";
+vec3[]       planarVelocityRollingValues;
 bool         replay          = false;
 const int    screenHeight    = Draw::GetHeight();
 const int    screenWidth     = Draw::GetWidth();
@@ -89,6 +90,7 @@ void Render() {
         deadTurtle = false;
         deadTurtleStart = 0;
         wasDeadTurtle = false;
+        planarVelocityRollingValues.RemoveRange(0, planarVelocityRollingValues.Length);
     }
 
     deadTurtle = State.IsTopContact && ScriptPlayer.WheelsContactCount == 0;
@@ -98,8 +100,10 @@ void Render() {
             wasDeadTurtle = true;
             deadTurtleStart = raceTime;
         }
-    } else
+    } else {
         wasDeadTurtle = false;
+        planarVelocityRollingValues.RemoveRange(0, planarVelocityRollingValues.Length);
+    }
 
     if (
         (S_HideWithGame && !UI::IsGameUIVisible())
@@ -107,15 +111,19 @@ void Render() {
     )
         return;
 
-    if (S_Window)
+    if (S_Debug)
         RenderUI(State, raceTime);
 
-    if (!Network.PlaygroundClientScriptAPI.IsInGameMenuDisplayed)
+    if (
+        !Network.PlaygroundClientScriptAPI.IsInGameMenuDisplayed
+        && deadTurtle
+        && raceTime - deadTurtleStart > S_RenderAfter * 1000
+    )
         RenderNvg(State);
 }
 
 void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
-    UI::Begin(title, S_Window, UI::WindowFlags::None);
+    UI::Begin(title + " (Debug)", S_Debug, UI::WindowFlags::AlwaysAutoResize);
         if (UI::BeginTable("##table", 2, UI::TableFlags::RowBg)) {
             UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.0f, 0.0f, 0.0f, 0.5f));
 
@@ -129,13 +137,55 @@ void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
             UI::TableNextColumn();
             UI::Text("velocity");
             UI::TableNextColumn();
-            UI::Text(Text::Format("%.3f, ", State.WorldVel.x) + Text::Format("%.3f, ", State.WorldVel.y) + Text::Format("%.3f", State.WorldVel.z));
+            UI::Text(FormatVec3(State.WorldVel));
 
             UI::TableNextRow();
             UI::TableNextColumn();
             UI::Text("speed");
             UI::TableNextColumn();
             UI::Text(tostring(State.WorldVel.Length()));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("X speed");
+            UI::TableNextColumn();
+            UI::Text(Text::Format("%.3f", State.WorldVel.x));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("Z speed");
+            UI::TableNextColumn();
+            UI::Text(Text::Format("%.3f", State.WorldVel.z));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("X-Z speed");
+            UI::TableNextColumn();
+            UI::Text(Text::Format("%.3f", vec3(State.WorldVel.x, 0.0f, State.WorldVel.z).Length()));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("position");
+            UI::TableNextColumn();
+            UI::Text(FormatVec3(State.Position));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("dir");
+            UI::TableNextColumn();
+            UI::Text(FormatVec3(State.Dir));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("left");
+            UI::TableNextColumn();
+            UI::Text(FormatVec3(State.Left));
+
+            UI::TableNextRow();
+            UI::TableNextColumn();
+            UI::Text("up");
+            UI::TableNextColumn();
+            UI::Text(FormatVec3(State.Up));
 
             UI::PopStyleColor();
             UI::EndTable();
@@ -148,33 +198,94 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     if (Camera::IsBehind(State.Position))
         return;
 
-    vec3[] points;
+    const vec3 startPoint = State.Position + (State.Dir * -S_X_Offset) + (State.Up * S_Y_Offset);
+    const vec2 startPointScreen = Camera::ToScreenSpace(startPoint);
 
-    for (float theta = 0.0f; theta < 4.0f * halfPi; theta += halfPi / S_Steps) {
-        points.InsertLast(
-            State.Position
-                + (vec3(State.Dir.x, 0.0f, State.Dir.z) * Math::Sin(theta) * S_Radius)
-                + (State.Left * Math::Cos(theta) * S_Radius)
-                + (State.Dir * -S_X_Offset)
-                + (State.Up * S_Y_Offset)
-        );
-    }
+    // base circle
+    //#########################################################################
 
-    nvg::BeginPath();
+    // vec3[] points;
 
-    const vec2 initPoint = Camera::ToScreenSpace(points[0]);
-    nvg::MoveTo(initPoint);
+    // for (float theta = 0.0f; theta < 4.0f * halfPi; theta += halfPi / S_Steps) {
+    //     points.InsertLast(
+    //         start
+    //         + (vec3(State.Dir.x, 0.0f, State.Dir.z) * Math::Sin(theta) * S_Radius)
+    //         + (State.Left * Math::Cos(theta) * S_Radius)
+    //     );
+    // }
 
-    for (uint i = 1; i < points.Length; i++) {
-        const vec2 point = Camera::ToScreenSpace(points[i]);
-        if (InScreenBounds(point))
-            nvg::LineTo(point);
-    }
+    // nvg::BeginPath();
+    // nvg::StrokeColor(S_Color);
+    // nvg::StrokeWidth(S_Stroke / camDist);
 
-    if (InScreenBounds(initPoint))
-        nvg::LineTo(initPoint);
+    // const vec2 baseCircleInitPoint = Camera::ToScreenSpace(points[0]);
+    // nvg::MoveTo(baseCircleInitPoint);
+
+    // for (uint i = 1; i < points.Length; i++) {
+    //     const vec2 point = Camera::ToScreenSpace(points[i]);
+    //     if (InScreenBounds(point))
+    //         nvg::LineTo(point);
+    // }
+
+    // if (InScreenBounds(baseCircleInitPoint))
+    //     nvg::LineTo(baseCircleInitPoint);
+
+    // nvg::Stroke();
+
+    // line
+    //#########################################################################
 
     nvg::StrokeColor(S_Color);
     nvg::StrokeWidth(S_Stroke / (Camera::GetCurrentPosition() - State.Position).Length());
+    nvg::BeginPath();
+
+    const vec3 planerVelocity = vec3(State.WorldVel.x, 0.0f, State.WorldVel.z);
+
+    planarVelocityRollingValues.InsertLast(planerVelocity);
+    while (planarVelocityRollingValues.Length > S_RollingMax)
+        planarVelocityRollingValues.RemoveAt(0);
+
+    const vec3 planarVelocityRollingAverage = AverageVec3(planarVelocityRollingValues);
+
+    const vec3 endPoint = startPoint + (planarVelocityRollingAverage.Length() > 0.0f ? planarVelocityRollingAverage.Normalized() * planarVelocityRollingAverage.Length() * 720.0f : vec3());
+    const vec2 endPointScreen = Camera::ToScreenSpace(endPoint);
+
+    if (InScreenBounds(startPointScreen))
+        nvg::MoveTo(startPointScreen);
+
+    if (InScreenBounds(endPointScreen))
+        nvg::LineTo(endPointScreen);
+
     nvg::Stroke();
+
+    // start ball
+    //#########################################################################
+
+    nvg::FillColor(S_StartColor);
+    nvg::BeginPath();
+
+    nvg::Circle(startPointScreen, S_BallRadius / (Camera::GetCurrentPosition() - startPoint).Length());
+
+    nvg::Fill();
+
+    // 10-minute ball
+    //#########################################################################
+
+    nvg::FillColor(S_10mColor);
+    nvg::BeginPath();
+
+    const vec3 midPoint = startPoint + (planarVelocityRollingAverage.Length() > 0.0f ? planarVelocityRollingAverage.Normalized() * planarVelocityRollingAverage.Length() * 360.0f : vec3());
+    nvg::Circle(Camera::ToScreenSpace(midPoint), S_BallRadius / (Camera::GetCurrentPosition() - midPoint).Length());
+
+    nvg::Fill();
+
+    // 20-minute ball
+    //#########################################################################
+
+    nvg::FillColor(S_20mColor);
+    nvg::BeginPath();
+
+    nvg::Circle(endPointScreen, S_BallRadius / (Camera::GetCurrentPosition() - endPoint).Length());
+
+    nvg::Fill();
 }
