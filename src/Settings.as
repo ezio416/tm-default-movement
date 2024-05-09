@@ -1,5 +1,5 @@
 // c 2024-03-15
-// m 2024-03-16
+// m 2024-05-09
 
 [Setting category="General" name="Enabled"]
 bool S_Enabled = true;
@@ -12,6 +12,9 @@ bool S_HideWithOP = false;
 
 [Setting category="General" name="Render after" description="After becoming a dead turtle, render after this many seconds." min=0 max=60]
 int S_RenderAfter = 5;
+
+[Setting category="General" name="Always render line" description="Can be somewhat glitchy when line is partially off-screen"]
+bool S_AlwaysLine = false;
 
 [Setting category="General" name="Show debug window"]
 bool S_Debug = false;

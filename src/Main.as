@@ -1,5 +1,5 @@
 // c 2024-03-15
-// m 2024-03-17
+// m 2024-05-09
 
 bool         deadTurtle      = false;
 int          deadTurtleStart = 0;
@@ -219,10 +219,10 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     const vec3 endPoint = startPoint + (planarVelocityLength > 0.0f ? planarVelocityNormal * planarVelocityLength * time20m : vec3());
     const vec2 endPointScreen = Camera::ToScreenSpace(endPoint);
 
-    if (InScreenBounds(startPointScreen))
+    if (S_AlwaysLine || InScreenBounds(startPointScreen))
         nvg::MoveTo(startPointScreen);
 
-    if (InScreenBounds(endPointScreen))
+    if (S_AlwaysLine || InScreenBounds(endPointScreen))
         nvg::LineTo(endPointScreen);
 
     nvg::Stroke();
