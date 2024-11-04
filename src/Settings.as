@@ -46,3 +46,14 @@ vec4 S_20mColor = vec4(1.0f, 0.0f, 0.0f, 0.5f);
 
 [Setting category="Position/Style" name="Smoothing" description="How large to keep the rolling average. Direct impact on framerate." min=1 max=2000]
 uint S_RollingMax = 1000;
+
+
+[Setting category="Secondary Display" name="Show secondary display"]
+bool S_Secondary = true;
+
+[Setting category="Secondary Display" name="X position" min=0.0f max=1.0f]
+float S_SecondX = 0.75f;
+
+[Setting category="Secondary Display" name="Y position" min=0.0f max=1.0f]
+float S_SecondY = 0.25f;
+

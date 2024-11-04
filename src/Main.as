@@ -193,7 +193,7 @@ void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
 }
 
 void RenderNvg(CSceneVehicleVisState@ State) {
-    if (Camera::IsBehind(State.Position))
+    if (!S_AlwaysLine && Camera::IsBehind(State.Position))
         return;
 
     const vec3 startPoint = State.Position + (State.Dir * -S_X_Offset) + (State.Up * S_Y_Offset);
@@ -257,4 +257,41 @@ void RenderNvg(CSceneVehicleVisState@ State) {
     nvg::Circle(endPointScreen, S_BallRadius / (Camera::GetCurrentPosition() - endPoint).Length());
 
     nvg::Fill();
+
+    // Secondary display
+    //#########################################################################
+
+    nvg::FillColor(S_LineColor);
+    nvg::BeginPath();
+
+    nvg::Circle(vec2(Draw::GetWidth() * S_SecondX, Draw::GetHeight() * S_SecondY), 10.0f);
+
+    nvg::Fill();
+
+    float halfPi = Math::PI * 0.5f;
+    float S_MinorAxis = 0.201f;
+    vec3[] points;
+
+    for (float theta = 0.0f; theta < 4.0f * halfPi; theta += halfPi / 12) {
+        points.InsertLast(
+            State.Position
+                + (State.Dir * Math::Sin(theta) * S_MinorAxis)
+                + (State.Left * Math::Cos(theta) * S_MinorAxis)
+                // + (State.Dir * -S_X_Offset)
+                + (State.Up * (S_Y_Offset + 0.065f))
+        );
+    }
+
+    nvg::BeginPath();
+    nvg::MoveTo(Camera::ToScreenSpace(points[0]));
+
+    for (uint j = 1; j < points.Length; j++)
+        nvg::LineTo(Camera::ToScreenSpace(points[j]));
+
+    nvg::LineTo(Camera::ToScreenSpace(points[0]));
+
+    nvg::StrokeColor(S_LineColor);
+    nvg::StrokeWidth(4);
+    nvg::Stroke();
+    nvg::ClosePath();
 }
