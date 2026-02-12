@@ -4,8 +4,6 @@ string       loginLocal;
 const string title           = "\\$0FB" + Icons::ArrowRight + "\\$G Default Movement";
 vec3[]       planarVelocityRollingValues;
 bool         replay          = false;
-const int    screenHeight    = Draw::GetHeight();
-const int    screenWidth     = Draw::GetWidth();
 bool         spectating      = false;
 const float  time10m         = 640.0f;  // should be 600.0 but in testing it's somehow not
 const float  time20m         = time10m * 2.0f;

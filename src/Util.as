@@ -28,5 +28,5 @@ const string FormatVec3(const vec3 vec) {
 }
 
 const bool InScreenBounds(const vec2 point) {
-    return point.x > 0.0f && int(Math::Abs(point.x)) < screenWidth && point.y > 0.0f && int(Math::Abs(point.y)) < screenHeight;
+    return point.x > 0.0f && int(Math::Abs(point.x)) < Display::GetWidth() && point.y > 0.0f && int(Math::Abs(point.y)) < Display::GetHeight();
 }
