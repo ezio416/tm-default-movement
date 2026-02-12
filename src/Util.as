@@ -1,6 +1,3 @@
-// c 2024-03-15
-// m 2024-03-16
-
 const vec3 AverageVec3(const vec3[] vecs) {
     vec3 total = vec3();
 
