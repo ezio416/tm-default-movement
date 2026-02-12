@@ -118,7 +118,7 @@ void Render() {
 }
 
 void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
-    UI::Begin(title + " (Debug)", S_Debug, UI::WindowFlags::AlwaysAutoResize);
+    if (UI::Begin(title + " (Debug)", S_Debug, UI::GetDefaultWindowFlags() | UI::WindowFlags::AlwaysAutoResize)) {
         if (UI::BeginTable("##table", 2, UI::TableFlags::RowBg)) {
             UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.0f, 0.0f, 0.0f, 0.5f));
 
@@ -185,6 +185,7 @@ void RenderUI(CSceneVehicleVisState@ State, const int raceTime) {
             UI::PopStyleColor();
             UI::EndTable();
         }
+    }
 
     UI::End();
 }
